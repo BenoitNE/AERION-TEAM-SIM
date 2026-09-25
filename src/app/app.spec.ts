@@ -5,9 +5,22 @@ import { App } from './app';
 describe('App', () => {
   beforeEach(async () => {
     localStorage.clear();
+    localStorage.setItem('aerion.prototype01.onboarding-complete', 'true');
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();
+  });
+
+  it('shows Claire onboarding on the first visit', () => {
+    localStorage.removeItem('aerion.prototype01.onboarding-complete');
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const guide = fixture.nativeElement.querySelector('.claire-guide')?.textContent as string;
+    expect(guide).toContain('Claire');
+    expect(guide).toContain('Bienvenue dans l’équipe');
+    expect(guide).toContain('Suivant');
   });
 
   it('renders the first Java ticket in French', () => {

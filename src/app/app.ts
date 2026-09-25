@@ -5,6 +5,35 @@ import { ReviewResult, TeamMember, TicketStatus } from './models';
 import { reviewSubmission } from './review-engine';
 
 const STORAGE_KEY = 'aerion.prototype01.ticket-status';
+const ONBOARDING_STORAGE_KEY = 'aerion.prototype01.onboarding-complete';
+
+interface OnboardingStep {
+  readonly title: string;
+  readonly message: string;
+}
+
+const ONBOARDING_STEPS: readonly OnboardingStep[] = [
+  {
+    title: 'Bienvenue dans l’équipe',
+    message:
+      "Ici, tu apprends en travaillant comme dans une vraie équipe. On te confie des tickets avec un besoin, un contexte et des critères d’acceptation — pas une suite d’exercices isolés.",
+  },
+  {
+    title: 'Tu codes dans ton vrai IDE',
+    message:
+      "Lis le ticket, puis ouvre le projet dans IntelliJ ou l’IDE de ton choix. AERION ne remplace pas ton environnement : tu codes, lances les tests et utilises Git comme sur un vrai projet.",
+  },
+  {
+    title: 'L’équipe relit ton travail',
+    message:
+      "Quand ta solution est prête, lance les tests, récupère ton git diff et colle-le ici. Marc, Nora et le reste de l’équipe peuvent valider ton approche ou te demander une correction ciblée.",
+  },
+  {
+    title: 'Tu progresseras sprint après sprint',
+    message:
+      "Les prochains tickets deviendront progressivement plus exigeants : Java, Angular, tests, sécurité, performance et architecture. Clique sur un membre de l’équipe à tout moment pour afficher son conseil.",
+  },
+];
 
 @Component({
   selector: 'ats-root',
@@ -23,6 +52,15 @@ export class App {
   protected readonly testsRunLocally = signal(false);
   protected readonly review = signal<ReviewResult | null>(null);
   protected readonly selectedMemberId = signal<string | null>(null);
+  protected readonly onboardingOpen = signal(!readOnboardingCompleted());
+  protected readonly onboardingStepIndex = signal(0);
+  protected readonly onboardingSteps = ONBOARDING_STEPS;
+  protected readonly onboardingStep = computed(
+    () => this.onboardingSteps[this.onboardingStepIndex()] ?? this.onboardingSteps[0],
+  );
+  protected readonly onboardingIsLastStep = computed(
+    () => this.onboardingStepIndex() === this.onboardingSteps.length - 1,
+  );
 
   protected readonly sprintProgress = computed(() => {
     switch (this.status()) {
@@ -117,6 +155,25 @@ export class App {
     this.submissionOpen.set(false);
   }
 
+  protected openOnboarding(): void {
+    this.onboardingStepIndex.set(0);
+    this.onboardingOpen.set(true);
+  }
+
+  protected closeOnboarding(): void {
+    this.onboardingOpen.set(false);
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
+  }
+
+  protected nextOnboardingStep(): void {
+    if (this.onboardingIsLastStep()) {
+      this.closeOnboarding();
+      return;
+    }
+
+    this.onboardingStepIndex.update((index) => index + 1);
+  }
+
   protected selectMember(id: string): void {
     this.selectedMemberId.update((current) => current === id ? null : id);
   }
@@ -144,6 +201,8 @@ export class App {
     this.selectedMemberId.set(null);
     this.projectHelpOpen.set(false);
     this.projectPathCopied.set(false);
+    this.onboardingOpen.set(false);
+    this.onboardingStepIndex.set(0);
     this.setStatus('À FAIRE');
   }
 
@@ -165,6 +224,10 @@ export class App {
     this.status.set(status);
     localStorage.setItem(STORAGE_KEY, status);
   }
+}
+
+function readOnboardingCompleted(): boolean {
+  return localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true';
 }
 
 function readStatus(): TicketStatus {

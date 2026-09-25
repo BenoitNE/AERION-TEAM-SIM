@@ -122,7 +122,16 @@
     <aside class="team-card">
       <header>
         <h2>Votre équipe</h2>
-        <span><i></i> 6/6</span>
+        <div class="team-header-actions">
+          <button
+            type="button"
+            class="help-button"
+            aria-label="Revoir la présentation de Claire"
+            title="Revoir l'accueil"
+            (click)="openOnboarding()"
+          >?</button>
+          <span><i></i> 6/6</span>
+        </div>
       </header>
 
       <section class="team-focus" aria-live="polite">
@@ -249,6 +258,59 @@
         <button type="button" class="secondary" (click)="closeSubmission()">Annuler</button>
         <button type="button" class="primary" (click)="submit()">Soumettre pour review</button>
       </footer>
+    </section>
+  </div>
+}
+
+
+@if (onboardingOpen()) {
+  <div class="onboarding-layer">
+    <section
+      class="claire-guide"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="claire-guide-title"
+      aria-describedby="claire-guide-message"
+    >
+      <div class="guide-character">
+        <span
+          class="avatar team-avatar guide-avatar"
+          role="img"
+          aria-label="Claire, Product Owner"
+          [style.background-position]="memberAvatarPosition('claire')"
+          [style.outline-color]="memberAccent('claire')"
+        ></span>
+        <div class="guide-identity">
+          <strong>Claire</strong>
+          <small>Product Owner</small>
+        </div>
+      </div>
+
+      <div class="guide-bubble">
+        <div class="guide-topline">
+          <span class="guide-step">Présentation {{ onboardingStepIndex() + 1 }}/{{ onboardingSteps.length }}</span>
+          <button
+            type="button"
+            class="guide-skip"
+            (click)="closeOnboarding()"
+          >Passer</button>
+        </div>
+
+        <h2 id="claire-guide-title">{{ onboardingStep().title }}</h2>
+        <p id="claire-guide-message">{{ onboardingStep().message }}</p>
+
+        <footer class="guide-footer">
+          <div class="guide-dots" aria-hidden="true">
+            @for (step of onboardingSteps; track $index) {
+              <span [class.active]="$index === onboardingStepIndex()"></span>
+            }
+          </div>
+
+          <button type="button" class="primary guide-next" (click)="nextOnboardingStep()">
+            {{ onboardingIsLastStep() ? 'Commencer' : 'Suivant' }}
+          </button>
+        </footer>
+      </div>
     </section>
   </div>
 }
