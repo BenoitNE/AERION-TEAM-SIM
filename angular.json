@@ -22,6 +22,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "team-catalog-reference.png",
+                "input": "docs/design/references",
+                "output": "assets"
               }
             ],
             "styles": [

@@ -70,6 +70,10 @@ export class App {
     return this.team.find((member) => member.id === id)?.accent ?? '#b9c8d8';
   }
 
+  protected memberAvatarPosition(id: string): string {
+    return this.team.find((member) => member.id === id)?.avatarPosition ?? '50% 50%';
+  }
+
   protected reset(): void {
     this.diff.set('');
     this.testsRunLocally.set(false);

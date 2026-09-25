@@ -327,6 +327,16 @@ h2 {
   font-weight: 900;
 }
 
+.team-avatar {
+  background-image: url('/assets/team-catalog-reference.png');
+  background-repeat: no-repeat;
+  background-size: 762.105% 571.579%;
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  box-shadow: 0 2px 8px rgba(25, 62, 105, 0.12);
+  color: transparent;
+}
+
 .avatar.player {
   width: 44px;
   height: 44px;
