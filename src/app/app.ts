@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import { FIRST_TICKET, TEAM } from './content';
-import { ReviewResult, TicketStatus } from './models';
+import { ReviewResult, TeamMember, TicketStatus } from './models';
 import { reviewSubmission } from './review-engine';
 
 const STORAGE_KEY = 'aerion.prototype01.ticket-status';
@@ -17,15 +17,71 @@ export class App {
   protected readonly ticket = FIRST_TICKET;
   protected readonly status = signal<TicketStatus>(readStatus());
   protected readonly submissionOpen = signal(false);
+  protected readonly projectHelpOpen = signal(false);
+  protected readonly projectPathCopied = signal(false);
   protected readonly diff = signal('');
   protected readonly testsRunLocally = signal(false);
   protected readonly review = signal<ReviewResult | null>(null);
-  protected readonly sprintProgress = computed(() => this.status() === 'VALIDÉ' ? 100 : 35);
+  protected readonly selectedMemberId = signal<string | null>(null);
+
+  protected readonly sprintProgress = computed(() => {
+    switch (this.status()) {
+      case 'À FAIRE':
+        return 20;
+      case 'EN COURS':
+        return 45;
+      case 'EN REVIEW':
+        return 70;
+      case 'À CORRIGER':
+        return 72;
+      case 'VALIDÉ':
+        return 100;
+    }
+  });
+
+  protected readonly activeMember = computed<TeamMember>(() => {
+    const id = this.selectedMemberId() ?? this.contextualMemberId();
+    return this.team.find((member) => member.id === id) ?? this.team[0];
+  });
+
+  protected readonly activeMemberMessage = computed(() => {
+    if (this.selectedMemberId()) {
+      return this.activeMember().principle;
+    }
+
+    switch (this.status()) {
+      case 'À FAIRE':
+        return "Commence par comprendre le besoin avant de toucher au code. Le ticket est volontairement petit.";
+      case 'EN COURS':
+        return "Garde un diff ciblé. Reproduis d'abord le bug avec un test, puis corrige le comportement.";
+      case 'EN REVIEW':
+        return "Je relis surtout le périmètre, le test de régression et la lisibilité de la correction.";
+      case 'À CORRIGER':
+        return "La review t'a donné un signal précis. Corrige ce point sans élargir inutilement le ticket.";
+      case 'VALIDÉ':
+        return "Ticket validé. Une petite correction bien testée vaut mieux qu'une grosse refonte hors sujet.";
+    }
+  });
 
   protected openProject(): void {
-    window.alert(
-      `Ouvre ce dossier dans ton IDE :\n\n${this.ticket.projectPath}\n\nPuis lance : mvn test`,
-    );
+    this.projectHelpOpen.set(true);
+    this.projectPathCopied.set(false);
+
+    if (this.status() === 'À FAIRE') {
+      this.setStatus('EN COURS');
+    }
+  }
+
+  protected closeProjectHelp(): void {
+    this.projectHelpOpen.set(false);
+  }
+
+  protected async copyProjectPath(): Promise<void> {
+    try {
+      await navigator.clipboard?.writeText(this.ticket.projectPath);
+    } finally {
+      this.projectPathCopied.set(true);
+    }
   }
 
   protected openSubmission(): void {
@@ -49,21 +105,28 @@ export class App {
 
   protected submit(): void {
     this.setStatus('EN REVIEW');
+
     const result = reviewSubmission({
       diff: this.diff(),
       testsRunLocally: this.testsRunLocally(),
     });
+
     this.review.set(result);
+    this.selectedMemberId.set(result.findings[0]?.authorId ?? null);
     this.setStatus(result.approved ? 'VALIDÉ' : 'À CORRIGER');
     this.submissionOpen.set(false);
   }
 
-  protected memberName(id: string): string {
-    return this.team.find((member) => member.id === id)?.name ?? 'Équipe';
+  protected selectMember(id: string): void {
+    this.selectedMemberId.update((current) => current === id ? null : id);
   }
 
-  protected memberInitials(id: string): string {
-    return this.team.find((member) => member.id === id)?.initials ?? 'EQ';
+  protected isActiveMember(id: string): boolean {
+    return this.activeMember().id === id;
+  }
+
+  protected memberName(id: string): string {
+    return this.team.find((member) => member.id === id)?.name ?? 'Équipe';
   }
 
   protected memberAccent(id: string): string {
@@ -78,7 +141,24 @@ export class App {
     this.diff.set('');
     this.testsRunLocally.set(false);
     this.review.set(null);
+    this.selectedMemberId.set(null);
+    this.projectHelpOpen.set(false);
+    this.projectPathCopied.set(false);
     this.setStatus('À FAIRE');
+  }
+
+  private contextualMemberId(): string {
+    switch (this.status()) {
+      case 'À FAIRE':
+        return 'claire';
+      case 'EN COURS':
+      case 'EN REVIEW':
+        return 'marc';
+      case 'À CORRIGER':
+        return 'nora';
+      case 'VALIDÉ':
+        return 'claire';
+    }
   }
 
   private setStatus(status: TicketStatus): void {

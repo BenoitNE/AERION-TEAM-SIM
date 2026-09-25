@@ -40,7 +40,12 @@
       <section class="ticket-card">
         <div class="ticket-head">
           <button type="button" class="back">← Retour aux tickets</button>
-          <span class="status">{{ status() }}</span>
+          <span
+            class="status"
+            [class.status-working]="status() === 'EN COURS' || status() === 'EN REVIEW'"
+            [class.status-fix]="status() === 'À CORRIGER'"
+            [class.status-done]="status() === 'VALIDÉ'"
+          >{{ status() }}</span>
         </div>
 
         <p class="eyebrow">{{ ticket.id }}</p>
@@ -69,8 +74,14 @@
         </div>
 
         <div class="actions">
-          <button type="button" class="secondary" (click)="openProject()">Ouvrir le projet</button>
-          <button type="button" class="primary" (click)="openSubmission()">Coller un diff</button>
+          <button type="button" class="secondary action-button" (click)="openProject()">
+            <span class="button-icon">↗</span>
+            Ouvrir le projet
+          </button>
+          <button type="button" class="primary action-button" (click)="openSubmission()">
+            <span class="button-icon">⌘</span>
+            Coller un diff
+          </button>
         </div>
       </section>
 
@@ -86,7 +97,10 @@
 
           <div class="review-list">
             @for (finding of result.findings; track $index) {
-              <article [class.blocking]="finding.level === 'blocking'">
+              <article
+                [class.blocking]="finding.level === 'blocking'"
+                [style.animation-delay.ms]="$index * 70"
+              >
                 <span
                   class="avatar team-avatar small"
                   role="img"
@@ -111,9 +125,29 @@
         <span><i></i> 6/6</span>
       </header>
 
+      <section class="team-focus" aria-live="polite">
+        <span
+          class="avatar team-avatar focus-avatar"
+          role="img"
+          [attr.aria-label]="activeMember().name"
+          [style.background-position]="activeMember().avatarPosition"
+          [style.outline-color]="activeMember().accent"
+        ></span>
+        <div>
+          <p class="focus-name">{{ activeMember().name }} <small>{{ activeMember().role }}</small></p>
+          <p class="focus-message">{{ activeMemberMessage() }}</p>
+        </div>
+      </section>
+
       <div class="team-list">
         @for (member of team; track member.id) {
-          <article>
+          <button
+            type="button"
+            class="team-person"
+            [class.active]="isActiveMember(member.id)"
+            [attr.aria-pressed]="isActiveMember(member.id)"
+            (click)="selectMember(member.id)"
+          >
             <span
               class="avatar team-avatar"
               role="img"
@@ -121,17 +155,56 @@
               [style.background-position]="member.avatarPosition"
               [style.outline-color]="member.accent"
             ></span>
-            <div class="member">
+            <span class="member">
               <strong>{{ member.name }}</strong>
               <small>{{ member.role }}</small>
-            </div>
-            <p>{{ member.principle }}</p>
-          </article>
+            </span>
+            <span class="presence" aria-label="En ligne"></span>
+          </button>
         }
       </div>
     </aside>
   </div>
 </div>
+
+@if (projectHelpOpen()) {
+  <div class="modal-backdrop" role="presentation">
+    <section
+      class="modal project-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="project-title"
+    >
+      <header>
+        <div>
+          <p class="eyebrow">TRAVAIL DANS TON IDE</p>
+          <h2 id="project-title">Ouvre le projet Java</h2>
+        </div>
+        <button type="button" class="close" aria-label="Fermer" (click)="closeProjectHelp()">×</button>
+      </header>
+
+      <p class="modal-intro">
+        Le code reste dans ton environnement habituel. Ouvre ce dossier dans IntelliJ ou l'IDE de ton choix.
+      </p>
+
+      <div class="command-row">
+        <code>{{ ticket.projectPath }}</code>
+        <button type="button" class="copy-button" (click)="copyProjectPath()">
+          {{ projectPathCopied() ? 'Copié ✓' : 'Copier' }}
+        </button>
+      </div>
+
+      <p class="command-label">Puis lance les tests :</p>
+      <div class="command-row">
+        <code>mvn test</code>
+      </div>
+
+      <footer>
+        <button type="button" class="primary" (click)="closeProjectHelp()">C'est parti</button>
+      </footer>
+    </section>
+  </div>
+}
 
 @if (submissionOpen()) {
   <div class="modal-backdrop" role="presentation">
