@@ -7,31 +7,57 @@ import { reviewSubmission } from './review-engine';
 const STORAGE_KEY = 'aerion.prototype01.ticket-status';
 const ONBOARDING_STORAGE_KEY = 'aerion.prototype01.onboarding-complete';
 
+type OnboardingTarget = 'welcome' | 'sprint' | 'ticket' | 'project' | 'team' | 'review';
+
 interface OnboardingStep {
+  readonly target: OnboardingTarget;
   readonly title: string;
   readonly message: string;
+  readonly action: string;
 }
 
 const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   {
-    title: 'Bienvenue dans l’équipe',
+    target: 'welcome',
+    title: 'Bienvenue dans l’équipe !',
     message:
-      "Ici, tu apprends en travaillant comme dans une vraie équipe. On te confie des tickets avec un besoin, un contexte et des critères d’acceptation — pas une suite d’exercices isolés.",
+      "Je suis Claire, Product Owner. Ici, tu vas apprendre en travaillant comme dans une vraie équipe : des tickets, un besoin métier, du code, des tests et des retours de tes collègues.",
+    action: 'Découvrir l’interface',
   },
   {
+    target: 'sprint',
+    title: 'Ton sprint',
+    message:
+      "Ici tu vois où en est le sprint. La progression avance quand tes tickets passent du travail en cours à la review, puis à la validation.",
+    action: 'Voir le ticket',
+  },
+  {
+    target: 'ticket',
+    title: 'Le ticket est ton point de départ',
+    message:
+      "Lis le contexte et les critères d’acceptation avant de coder. L’objectif n’est pas de deviner la solution : il faut comprendre le besoin et produire une modification ciblée.",
+    action: 'Voir le projet',
+  },
+  {
+    target: 'project',
     title: 'Tu codes dans ton vrai IDE',
     message:
-      "Lis le ticket, puis ouvre le projet dans IntelliJ ou l’IDE de ton choix. AERION ne remplace pas ton environnement : tu codes, lances les tests et utilises Git comme sur un vrai projet.",
+      "Ce bouton te donne le projet à ouvrir dans IntelliJ, WebStorm ou l’IDE de ton choix. AERION ne remplace pas tes outils : tu compiles, testes, débugges et utilises Git pour de vrai.",
+    action: 'Rencontrer l’équipe',
   },
   {
-    title: 'L’équipe relit ton travail',
+    target: 'team',
+    title: 'Tu n’es pas seul',
     message:
-      "Quand ta solution est prête, lance les tests, récupère ton git diff et colle-le ici. Marc, Nora et le reste de l’équipe peuvent valider ton approche ou te demander une correction ciblée.",
+      "Claire garde le cap métier, Marc t’accompagne sur Java, Nora challenge les tests, Inès le front, Sam la robustesse et Julien l’architecture. Clique sur eux quand tu veux un conseil.",
+    action: 'Voir la review',
   },
   {
-    title: 'Tu progresseras sprint après sprint',
+    target: 'review',
+    title: 'Soumets ton travail pour review',
     message:
-      "Les prochains tickets deviendront progressivement plus exigeants : Java, Angular, tests, sécurité, performance et architecture. Clique sur un membre de l’équipe à tout moment pour afficher son conseil.",
+      "Quand tes tests passent, récupère ton git diff et colle-le ici. L’équipe te répondra comme en code review : validation, remarque ciblée ou demande de correction. Puis on recommence avec des sujets plus exigeants.",
+    action: 'Commencer',
   },
 ];
 
@@ -165,6 +191,10 @@ export class App {
     localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
   }
 
+  protected previousOnboardingStep(): void {
+    this.onboardingStepIndex.update((index) => Math.max(0, index - 1));
+  }
+
   protected nextOnboardingStep(): void {
     if (this.onboardingIsLastStep()) {
       this.closeOnboarding();
@@ -172,6 +202,10 @@ export class App {
     }
 
     this.onboardingStepIndex.update((index) => index + 1);
+  }
+
+  protected onboardingTargets(target: OnboardingTarget): boolean {
+    return this.onboardingOpen() && this.onboardingStep().target === target;
   }
 
   protected selectMember(id: string): void {

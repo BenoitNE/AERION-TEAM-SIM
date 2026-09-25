@@ -20,7 +20,23 @@ describe('App', () => {
     const guide = fixture.nativeElement.querySelector('.claire-guide')?.textContent as string;
     expect(guide).toContain('Claire');
     expect(guide).toContain('Bienvenue dans l’équipe');
-    expect(guide).toContain('Suivant');
+    expect(guide).toContain('Découvrir l’interface');
+  });
+
+  it('moves the animated tour from the welcome step to the sprint', () => {
+    localStorage.removeItem('aerion.prototype01.onboarding-complete');
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const next = fixture.nativeElement.querySelector('.guide-next') as HTMLButtonElement;
+    next.click();
+    fixture.detectChanges();
+
+    const sprint = fixture.nativeElement.querySelector('.sprint') as HTMLElement;
+    const guide = fixture.nativeElement.querySelector('.claire-coach')?.textContent as string;
+    expect(sprint.classList.contains('tour-highlight')).toBe(true);
+    expect(guide).toContain('Ton sprint');
   });
 
   it('renders the first Java ticket in French', () => {
