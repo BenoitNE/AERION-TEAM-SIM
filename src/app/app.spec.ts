@@ -17,7 +17,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
 
-    const guide = fixture.nativeElement.querySelector('.claire-guide')?.textContent as string;
+    const guide = fixture.nativeElement.querySelector('.claire-coach')?.textContent as string;
     expect(guide).toContain('Claire');
     expect(guide).toContain('Bienvenue dans l’équipe');
     expect(guide).toContain('Découvrir l’interface');

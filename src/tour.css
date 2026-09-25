@@ -1,0 +1,448 @@
+.team-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.help-button {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: white;
+  color: var(--navy-600);
+  font-weight: 900;
+  transition: transform 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.help-button:hover {
+  transform: translateY(-1px);
+  border-color: #bdd7d1;
+  color: var(--teal);
+}
+
+
+.tour-highlight {
+  position: relative;
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 4px rgba(40, 173, 154, 0.72),
+    0 0 0 10px rgba(40, 173, 154, 0.14),
+    0 18px 50px rgba(25, 62, 105, 0.2),
+    0 0 0 9999px rgba(12, 39, 81, 0.18) !important;
+  animation: tour-pulse 1.7s ease-in-out infinite;
+}
+
+.action-button.tour-highlight {
+  border-radius: 13px;
+}
+
+.tour-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.tour-veil {
+  display: none;
+}
+
+.tour-welcome .tour-veil {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 23% 72%, rgba(255, 255, 255, .18), transparent 26%),
+    rgba(12, 39, 81, .24);
+  backdrop-filter: blur(2px) saturate(.9);
+  animation: fade-in 180ms ease-out both;
+}
+
+.claire-coach {
+  position: fixed;
+  z-index: 50;
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  width: min(650px, calc(100vw - 40px));
+  pointer-events: auto;
+  transition:
+    left 320ms cubic-bezier(.2, .8, .2, 1),
+    right 320ms cubic-bezier(.2, .8, .2, 1),
+    top 320ms cubic-bezier(.2, .8, .2, 1),
+    bottom 320ms cubic-bezier(.2, .8, .2, 1),
+    transform 320ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.coach-portrait-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 18px 28px rgba(20, 54, 92, .18));
+}
+
+.coach-portrait {
+  display: block;
+  width: 116px;
+  height: 136px;
+  border-radius: 58px 58px 28px 28px;
+  background-size: 762.105% 571.579%;
+  outline: 5px solid white;
+  box-shadow: 0 0 0 3px rgba(243, 190, 86, .72);
+  transform-origin: bottom center;
+  animation: claire-breathe 3s ease-in-out infinite;
+}
+
+.coach-wave {
+  position: absolute;
+  right: -9px;
+  top: 2px;
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
+  background: white;
+  font-size: 21px;
+  box-shadow: 0 8px 20px rgba(25, 62, 105, .14);
+  animation: coach-wave 1.5s ease-in-out infinite;
+}
+
+.coach-bubble {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 22px 24px 20px;
+  border: 1px solid rgba(220, 232, 242, .95);
+  border-radius: 22px 22px 22px 7px;
+  background: rgba(255, 255, 255, .98);
+  box-shadow: 0 24px 65px rgba(13, 43, 79, .2);
+}
+
+.coach-bubble::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  bottom: 26px;
+  width: 22px;
+  height: 22px;
+  border-left: 1px solid rgba(220, 232, 242, .95);
+  border-bottom: 1px solid rgba(220, 232, 242, .95);
+  background: white;
+  transform: rotate(45deg);
+}
+
+.guide-topline,
+.guide-footer,
+.guide-actions {
+  display: flex;
+  align-items: center;
+}
+
+.guide-topline,
+.guide-footer {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.guide-step {
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.guide-skip {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.guide-skip:hover {
+  color: var(--navy-950);
+}
+
+.coach-copy h2 {
+  margin: 12px 0 8px;
+  color: var(--navy-950);
+  font-size: 24px;
+}
+
+.coach-copy p {
+  margin: 0 0 20px;
+  color: #536d8a;
+  line-height: 1.58;
+}
+
+.guide-footer {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.guide-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.guide-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #d9e3ec;
+  transition: width 180ms ease, background 180ms ease;
+}
+
+.guide-dots span.active {
+  width: 22px;
+  background: var(--teal);
+}
+
+.guide-actions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.guide-previous,
+.guide-next {
+  padding: 11px 15px;
+}
+
+.guide-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour-welcome .claire-coach {
+  left: 50%;
+  bottom: 38px;
+  width: min(850px, calc(100vw - 46px));
+  transform: translateX(-50%);
+}
+
+.tour-welcome .coach-portrait {
+  width: 154px;
+  height: 180px;
+  border-radius: 76px 76px 34px 34px;
+}
+
+.tour-sprint .claire-coach {
+  left: 50%;
+  top: 126px;
+  transform: translateX(-50%);
+}
+
+.tour-ticket .claire-coach {
+  left: 230px;
+  bottom: 28px;
+}
+
+.tour-project .claire-coach,
+.tour-review .claire-coach {
+  left: 230px;
+  bottom: 28px;
+}
+
+.tour-team .claire-coach {
+  right: 330px;
+  bottom: 28px;
+}
+
+.tour-callout {
+  position: fixed;
+  z-index: 49;
+  pointer-events: none;
+}
+
+.tour-callout span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 8px 22px rgba(40, 173, 154, .28);
+}
+
+.tour-callout i {
+  position: absolute;
+  display: block;
+  width: 72px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--teal);
+  transform-origin: left center;
+}
+
+.tour-sprint .tour-callout {
+  top: 122px;
+  left: calc(50% - 330px);
+}
+
+.tour-sprint .tour-callout i {
+  left: 28px;
+  top: 30px;
+  transform: rotate(14deg);
+}
+
+.tour-ticket .tour-callout {
+  top: 168px;
+  left: 270px;
+}
+
+.tour-ticket .tour-callout i {
+  left: 28px;
+  top: 30px;
+  transform: rotate(28deg);
+}
+
+.tour-project .tour-callout {
+  left: 360px;
+  bottom: 205px;
+}
+
+.tour-project .tour-callout i {
+  left: 28px;
+  top: 12px;
+  transform: rotate(-28deg);
+}
+
+.tour-team .tour-callout {
+  right: 315px;
+  top: 190px;
+}
+
+.tour-team .tour-callout i {
+  left: 28px;
+  top: 16px;
+  transform: rotate(-8deg);
+}
+
+.tour-review .tour-callout {
+  left: 650px;
+  bottom: 205px;
+}
+
+.tour-review .tour-callout i {
+  left: 28px;
+  top: 12px;
+  transform: rotate(-28deg);
+}
+
+@keyframes tour-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 4px rgba(40, 173, 154, .66),
+      0 0 0 10px rgba(40, 173, 154, .11),
+      0 18px 50px rgba(25, 62, 105, .16),
+      0 0 0 9999px rgba(12, 39, 81, .18);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(40, 173, 154, .84),
+      0 0 0 16px rgba(40, 173, 154, .06),
+      0 22px 55px rgba(25, 62, 105, .2),
+      0 0 0 9999px rgba(12, 39, 81, .18);
+  }
+}
+
+@keyframes claire-breathe {
+  0%, 100% { transform: translateY(0) rotate(-.4deg); }
+  50% { transform: translateY(-4px) rotate(.4deg); }
+}
+
+@keyframes coach-wave {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(12deg); }
+  55% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+@media (max-width: 1080px) {
+  .tour-ticket .claire-coach,
+  .tour-project .claire-coach,
+  .tour-review .claire-coach {
+    left: 170px;
+  }
+
+  .tour-team .claire-coach {
+    right: 24px;
+    bottom: 24px;
+  }
+
+  .tour-callout {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .tour-highlight {
+    box-shadow:
+      0 0 0 3px rgba(40, 173, 154, .72),
+      0 0 0 7px rgba(40, 173, 154, .12) !important;
+    animation: none;
+  }
+
+  .claire-coach,
+  .tour-welcome .claire-coach,
+  .tour-sprint .claire-coach,
+  .tour-ticket .claire-coach,
+  .tour-project .claire-coach,
+  .tour-team .claire-coach,
+  .tour-review .claire-coach {
+    left: 14px;
+    right: 14px;
+    top: auto;
+    bottom: 14px;
+    width: auto;
+    transform: none;
+    gap: 10px;
+  }
+
+  .coach-portrait,
+  .tour-welcome .coach-portrait {
+    width: 74px;
+    height: 86px;
+    border-radius: 38px 38px 22px 22px;
+  }
+
+  .coach-wave {
+    width: 30px;
+    height: 30px;
+    right: -8px;
+    font-size: 16px;
+  }
+
+  .coach-bubble {
+    padding: 16px;
+  }
+
+  .coach-copy h2 {
+    font-size: 19px;
+  }
+
+  .coach-copy p {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .guide-footer {
+    align-items: flex-end;
+  }
+
+  .guide-actions {
+    flex-wrap: wrap;
+  }
+
+  .guide-previous,
+  .guide-next {
+    padding: 9px 11px;
+  }
+}
