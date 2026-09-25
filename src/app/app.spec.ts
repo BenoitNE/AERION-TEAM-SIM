@@ -26,7 +26,7 @@ describe('App', () => {
     fixture.detectChanges();
 
     const buttons = Array.from(
-      fixture.nativeElement.querySelectorAll<HTMLButtonElement>('.team-person'),
+      fixture.nativeElement.querySelectorAll('.team-person') as NodeListOf<HTMLButtonElement>,
     );
     const marcButton = buttons.find((button) => button.textContent?.includes('Marc'));
 
@@ -44,7 +44,7 @@ describe('App', () => {
     fixture.detectChanges();
 
     const openProjectButton = Array.from(
-      fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button'),
+      fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
     ).find((button) => button.textContent?.includes('Ouvrir le projet'));
 
     openProjectButton?.click();
