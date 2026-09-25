@@ -1,0 +1,172 @@
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">A</span>
+      <div>
+        <strong>AERION TEAM SIM</strong>
+        <small>Simulation d'équipe logiciel</small>
+      </div>
+    </div>
+
+    <section class="sprint">
+      <div>
+        <strong>Sprint 01</strong>
+        <small>Prototype d'intégration</small>
+      </div>
+      <div class="progress" aria-label="Progression du sprint">
+        <span [style.width.%]="sprintProgress()"></span>
+      </div>
+      <b>{{ sprintProgress() }} %</b>
+    </section>
+
+    <div class="profile">
+      <div class="avatar player">VOUS</div>
+      <div>
+        <strong>Niveau 1</strong>
+        <small>Développeur</small>
+      </div>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="sidebar" aria-label="Navigation principale">
+      <button class="active" type="button"><span>⌂</span> Accueil</button>
+      <button type="button"><span>□</span> Sprint</button>
+      <button type="button"><span>●●</span> Équipe</button>
+      <button type="button"><span>▤</span> Tickets</button>
+    </nav>
+
+    <main>
+      <section class="ticket-card">
+        <div class="ticket-head">
+          <button type="button" class="back">← Retour aux tickets</button>
+          <span class="status">{{ status() }}</span>
+        </div>
+
+        <p class="eyebrow">{{ ticket.id }}</p>
+        <h1>{{ ticket.title }}</h1>
+
+        <div class="tags">
+          @for (technology of ticket.technologies; track technology) {
+            <span>{{ technology }}</span>
+          }
+        </div>
+
+        <div class="ticket-grid">
+          <article>
+            <h2>Contexte</h2>
+            <p>{{ ticket.context }}</p>
+          </article>
+
+          <article>
+            <h2>Critères d'acceptation</h2>
+            <ul>
+              @for (criterion of ticket.acceptanceCriteria; track criterion) {
+                <li><span class="checkbox"></span>{{ criterion }}</li>
+              }
+            </ul>
+          </article>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="secondary" (click)="openProject()">Ouvrir le projet</button>
+          <button type="button" class="primary" (click)="openSubmission()">Coller un diff</button>
+        </div>
+      </section>
+
+      @if (review(); as result) {
+        <section class="review-card" [class.approved]="result.approved">
+          <header>
+            <div>
+              <p class="eyebrow">CODE REVIEW</p>
+              <h2>{{ result.approved ? 'Modification approuvée' : 'Modifications demandées' }}</h2>
+            </div>
+            <button type="button" class="text-button" (click)="reset()">Recommencer</button>
+          </header>
+
+          <div class="review-list">
+            @for (finding of result.findings; track $index) {
+              <article [class.blocking]="finding.level === 'blocking'">
+                <span
+                  class="avatar small"
+                  [style.background]="memberAccent(finding.authorId)"
+                >{{ memberInitials(finding.authorId) }}</span>
+                <div>
+                  <strong>{{ memberName(finding.authorId) }}</strong>
+                  <p>{{ finding.message }}</p>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </main>
+
+    <aside class="team-card">
+      <header>
+        <h2>Votre équipe</h2>
+        <span><i></i> 6/6</span>
+      </header>
+
+      <div class="team-list">
+        @for (member of team; track member.id) {
+          <article>
+            <span class="avatar" [style.background]="member.accent">{{ member.initials }}</span>
+            <div class="member">
+              <strong>{{ member.name }}</strong>
+              <small>{{ member.role }}</small>
+            </div>
+            <p>{{ member.principle }}</p>
+          </article>
+        }
+      </div>
+    </aside>
+  </div>
+</div>
+
+@if (submissionOpen()) {
+  <div class="modal-backdrop" role="presentation">
+    <section
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="submission-title"
+    >
+      <header>
+        <div>
+          <p class="eyebrow">{{ ticket.id }}</p>
+          <h2 id="submission-title">Soumettre ton travail</h2>
+        </div>
+        <button type="button" class="close" aria-label="Fermer" (click)="closeSubmission()">×</button>
+      </header>
+
+      <p>
+        Depuis ton projet local, exécute <code>git diff</code> puis colle le résultat ici.
+      </p>
+
+      <label for="diff">Git diff</label>
+      <textarea
+        id="diff"
+        rows="14"
+        spellcheck="false"
+        placeholder="diff --git ..."
+        [value]="diff()"
+        (input)="updateDiff($event)"
+      ></textarea>
+
+      <label class="checkline">
+        <input
+          type="checkbox"
+          [checked]="testsRunLocally()"
+          (change)="updateTestsRun($event)"
+        >
+        J'ai exécuté les tests localement et ils passent.
+      </label>
+
+      <footer>
+        <button type="button" class="secondary" (click)="closeSubmission()">Annuler</button>
+        <button type="button" class="primary" (click)="submit()">Soumettre pour review</button>
+      </footer>
+    </section>
+  </div>
+}
