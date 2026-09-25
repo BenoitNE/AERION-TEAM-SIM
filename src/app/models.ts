@@ -6,6 +6,7 @@ export interface TeamMember {
   readonly role: string;
   readonly initials: string;
   readonly accent: string;
+  readonly avatarPosition: string;
   readonly principle: string;
 }
 

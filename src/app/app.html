@@ -88,9 +88,12 @@
             @for (finding of result.findings; track $index) {
               <article [class.blocking]="finding.level === 'blocking'">
                 <span
-                  class="avatar small"
-                  [style.background]="memberAccent(finding.authorId)"
-                >{{ memberInitials(finding.authorId) }}</span>
+                  class="avatar team-avatar small"
+                  role="img"
+                  [attr.aria-label]="memberName(finding.authorId)"
+                  [style.background-position]="memberAvatarPosition(finding.authorId)"
+                  [style.outline-color]="memberAccent(finding.authorId)"
+                ></span>
                 <div>
                   <strong>{{ memberName(finding.authorId) }}</strong>
                   <p>{{ finding.message }}</p>
@@ -111,7 +114,13 @@
       <div class="team-list">
         @for (member of team; track member.id) {
           <article>
-            <span class="avatar" [style.background]="member.accent">{{ member.initials }}</span>
+            <span
+              class="avatar team-avatar"
+              role="img"
+              [attr.aria-label]="member.name"
+              [style.background-position]="member.avatarPosition"
+              [style.outline-color]="member.accent"
+            ></span>
             <div class="member">
               <strong>{{ member.name }}</strong>
               <small>{{ member.role }}</small>
